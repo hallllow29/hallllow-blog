@@ -1,4 +1,51 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
-theme = 'PaperMod'
+baseURL = "https://hallllow-blog.pages.dev/"
+languageCode = "en-us"
+title = "hallllow"
+theme = "PaperMod"
+
+[params]
+  defaultTheme = "dark"
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowCodeCopyButtons = true
+
+  [params.profileMode]
+    enabled = true
+    title = "hallllow"
+    subtitle = "CTF player · red team & AD enthusiast · security student"
+    imageUrl = "images/logo.png"
+    imageWidth = 160
+    imageHeight = 160
+
+    [[params.profileMode.buttons]]
+      name = "whoami"
+      url = "whoami"
+    [[params.profileMode.buttons]]
+      name = "research"
+      url = "research"
+    [[params.profileMode.buttons]]
+      name = "write-ups"
+      url = "posts"
+
+    [[params.socialIcons]]
+      name = "github"
+      url = "https://github.com/hallllow29"
+
+    [[params.socialIcons]]
+      name = "linkedin"
+      url = "https://www.linkedin.com/in/pedro-antunes-286165254/"
+
+    
+
+[[menu.main]]
+  name = "whoami"
+  url = "/whoami/"
+  weight = 1
+[[menu.main]]
+  name = "research"
+  url = "/research/"
+  weight = 2
+[[menu.main]]
+  name = "write-ups"
+  url = "/posts/"
+  weight = 3
