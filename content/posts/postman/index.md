@@ -10,11 +10,11 @@ tags:
 os: Linux
 difficulty: Easy
 description: "HTB Postman (Easy). Redis unauth foothold by writing an SSH key into authorized_keys, id_rsa.bak cracked with john to reach Matt, and Webmin CVE-2019-15107 for root."
-cover:
-  image: "featured.png"
-  alt: "Postman box"
-  relative: true
 ---
+
+<p style="text-align:center">
+  <img src="featured.png" alt="Postman box" width="250">
+</p>
 
 <p>
   <img src="https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=flat&logo=hackthebox&logoColor=black" alt="Platform">
