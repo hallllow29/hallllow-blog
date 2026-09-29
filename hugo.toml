@@ -3,6 +3,9 @@ languageCode = "en-us"
 title = "hallllow"
 theme = "PaperMod"
 
+[markup.goldmark.renderer]
+  unsafe = true
+  
 [params]
   defaultTheme = "dark"
   ShowReadingTime = true

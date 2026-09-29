@@ -10,11 +10,17 @@ tags:
 os: Linux
 difficulty: Easy
 description: "HTB Postman (Easy). Redis unauth foothold by writing an SSH key into authorized_keys, id_rsa.bak cracked with john to reach Matt, and Webmin CVE-2019-15107 for root."
+cover:
+  image: "featured.png"
+  alt: "Postman box"
+  relative: true
 ---
 
-![Postman](featured.png)
-
-![Platform](https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=flat&logo=hackthebox&logoColor=black) ![OS](https://img.shields.io/badge/OS-Linux-E95420?style=flat&logo=linux&logoColor=white) ![Difficulty](https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat)
+<p>
+  <img src="https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=flat&logo=hackthebox&logoColor=black" alt="Platform">
+  <img src="https://img.shields.io/badge/OS-Linux-E95420?style=flat&logo=linux&logoColor=white" alt="OS">
+  <img src="https://img.shields.io/badge/Difficulty-Easy-brightgreen?style=flat" alt="Difficulty">
+</p>
 
 > **TL;DR** - Foothold through a misconfigured Redis instance by writing an SSH key into `authorized_keys`. From the `redis` user I find an `id_rsa.bak` belonging to Matt, crack its passphrase with john, and switch to Matt. Root comes from CVE-2019-15107 on Webmin, exploited through a Metasploit module.
 
