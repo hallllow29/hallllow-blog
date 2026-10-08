@@ -34,7 +34,7 @@ I started with a full nmap scan.
 nmap -sV -sC -p- -oA nmap/forest 10.129.95.210
 ```
 
-![](Images/Forest-NmapScan.png)
+![](Images/Forest-Nmap.png)
 
 The open ports paint a clear picture of a Windows **Domain Controller**: Kerberos (88), DNS (53), LDAP (389/3268), SMB (445) and WinRM (5985). The two HTTP ports just return `Not Found`, so they're a dead end.
 
@@ -79,7 +79,7 @@ GetNPUsers.py htb.local/ -usersfile users.txt -no-pass -dc-ip 10.129.95.210
 hashcat -m 18200 asrep.hash /usr/share/wordlists/rockyou.txt
 ```
 
-![](Images/Forest-hashcat.png)
+![](Images/Forest-password.png)
 
 Cracked:
 
