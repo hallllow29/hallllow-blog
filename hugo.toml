@@ -63,6 +63,12 @@ theme = "PaperMod"
   url = "/search/"
   weight = 5
 
-# JSON output on the home page builds the Fuse.js index that the search page uses
+# SearchIndex (per-section) feeds the ippsec.rocks-style technique search.
+# JSON is kept for compatibility; SearchIndex emits /sectionindex.json
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS", "JSON", "SearchIndex"]
+
+[outputFormats.SearchIndex]
+  mediaType = "application/json"
+  baseName = "sectionindex"
+  isPlainText = true
