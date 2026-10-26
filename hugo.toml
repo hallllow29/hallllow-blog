@@ -14,8 +14,17 @@ theme = "PaperMod"
   ShowBreadCrumbs = true
   ShowPostNavLinks = true
 
+  # Home hero (rendered by layouts/index.html)
+  author = "hallllow"
+  roles = "red teamer · Active Directory enthusiast · security student"
+  intro1 = "This is where I dump write-ups from the boxes and CTFs I play, the CVEs and bugs I run into, and notes from whatever rabbit hole I happen to be down."
+  intro2 = "I'm firmly on the offensive side — red teaming and Active Directory are what I keep coming back to."
+  ctaText = "View my write-ups"
+  ctaURL = "posts"
+
+  # profileMode is replaced by the custom home hero in layouts/index.html
   [params.profileMode]
-    enabled = true
+    enabled = false
     title = "hallllow"
     subtitle = "CTF player · red team & AD enthusiast · security student"
     imageUrl = "images/logo.png"
@@ -47,28 +56,16 @@ theme = "PaperMod"
   url = "/whoami/"
   weight = 1
 [[menu.main]]
-  name = "research"
-  url = "/research/"
-  weight = 2
-[[menu.main]]
   name = "write-ups"
   url = "/posts/"
+  weight = 2
+[[menu.main]]
+  name = "research"
+  url = "/research/"
   weight = 3
-[[menu.main]]
-  name = "archive"
-  url = "/archive/"
-  weight = 4
-[[menu.main]]
-  name = "search"
-  url = "/search/"
-  weight = 5
 
-# SearchIndex (per-section) feeds the ippsec.rocks-style technique search.
-# JSON is kept for compatibility; SearchIndex emits /sectionindex.json
+# archive + search pages still exist (/archive/, /search/) but are kept out of the top nav
+
+# JSON output on the home page builds the Fuse.js index the search page uses
 [outputs]
-  home = ["HTML", "RSS", "JSON", "SearchIndex"]
-
-[outputFormats.SearchIndex]
-  mediaType = "application/json"
-  baseName = "sectionindex"
-  isPlainText = true
+  home = ["HTML", "RSS", "JSON"]

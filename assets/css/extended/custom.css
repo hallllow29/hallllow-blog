@@ -1,0 +1,94 @@
+/* ===================== hallllow — custom theme ===================== */
+:root {
+  --accent: #ff4d5a;
+  --accent-hover: #ff6670;
+  --accent-soft: rgba(255, 77, 90, .14);
+  --main-width: 860px;
+}
+
+/* Dark base with subtle cool/warm glows (home + everywhere) */
+body {
+  background:
+    radial-gradient(900px 480px at 12% -8%, rgba(90, 120, 170, .10), transparent 58%),
+    radial-gradient(1100px 560px at 55% 118%, rgba(255, 77, 90, .12), transparent 60%),
+    #16181b;
+  background-attachment: fixed;
+}
+
+/* ===== Header / brand:  $ hallllow  ===== */
+.logo a {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  color: var(--accent) !important;
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+.logo a::before { content: "$ "; color: var(--accent); opacity: .9; }
+
+#menu a:hover,
+#menu .active,
+#menu a.active,
+#menu li.active a { color: var(--accent); }
+#menu .active::after { background: var(--accent) !important; }
+
+/* ===== Home hero ===== */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  min-height: calc(100vh - 220px);
+  padding: 2rem 0;
+}
+.hero-text { flex: 1 1 56%; max-width: 560px; }
+.hero-title {
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  line-height: 1.06;
+  font-weight: 800;
+  margin: 0 0 .6rem;
+}
+.hero-name { display: block; color: var(--accent); }
+.hero-roles { color: var(--secondary); font-size: 1.05rem; margin: 0 0 1.4rem; }
+.hero-intro p { color: var(--content); opacity: .85; line-height: 1.6; margin: 0 0 1rem; }
+
+/* buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-weight: 700; border-radius: 10px; padding: .7rem 1.2rem;
+  text-decoration: none;
+  transition: transform .08s ease, background .15s ease, color .15s ease, border-color .15s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: #fff; margin: .6rem 0 1.4rem; }
+.btn-primary:hover { background: var(--accent-hover); color: #fff; }
+.hero-social { display: flex; flex-wrap: wrap; gap: .8rem; }
+.btn-ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+.btn-ghost:hover { background: var(--accent-soft); }
+.btn-ghost svg { display: block; }
+
+/* hero image (the seagull) */
+.hero-image { flex: 0 0 auto; }
+.hero-image img {
+  width: clamp(200px, 26vw, 300px);
+  height: auto;
+  border-radius: 22px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .55);
+}
+
+/* ===== small accent polish on the rest of the site ===== */
+.post-content a { text-decoration-color: var(--accent); }
+.entry-hint-parent, .breadcrumbs a:hover { color: var(--accent); }
+.post-tags a:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ===== responsive ===== */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 1.6rem;
+    min-height: unset;
+    padding: 1.2rem 0 2.5rem;
+  }
+  .hero-text { max-width: 100%; }
+  .hero-social { justify-content: center; }
+  .hero-image img { width: clamp(160px, 50vw, 220px); }
+}
