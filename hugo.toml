@@ -22,6 +22,13 @@ theme = "PaperMod"
   ctaText = "View my write-ups"
   ctaURL = "posts"
 
+  # Browser tab icon (the seagull), generated into static/ from assets/images/logo.png
+  [params.assets]
+    favicon = "/favicon.ico"
+    favicon16x16 = "/favicon-16x16.png"
+    favicon32x32 = "/favicon-32x32.png"
+    apple_touch_icon = "/apple-touch-icon.png"
+
   # profileMode is replaced by the custom home hero in layouts/index.html
   [params.profileMode]
     enabled = false
