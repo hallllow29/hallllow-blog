@@ -2,11 +2,11 @@
 title: HTB - Media
 date: 2026-10-08
 tags:
-  - hackthebox
-  - writeup
   - llmnr-poisoning
   - file-upload
   - symlink
+categories:
+  - HackTheBox
 os: Windows
 difficulty: Medium
 description: "HTB Media (Medium). A video-upload feature lets us smuggle an .asx playlist pointing at a UNC path, coercing the server into leaking enox's NetNTLM hash over SMB. We crack it, reuse it over SSH, then abuse the upload handler's predictable paths with a symlink to drop a webshell in the XAMPP webroot, and finish with FullPowers to reach nt authority\\system."

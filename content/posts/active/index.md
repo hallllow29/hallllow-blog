@@ -2,11 +2,11 @@
 title: HTB - Active
 date: 2026-10-13
 tags:
-  - hackthebox
-  - writeup
   - active-directory
   - gpp-password
   - kerberoasting
+categories:
+  - HackTheBox
 os: Windows
 difficulty: Easy
 description: "HTB Active (Easy). Anonymous SMB access to a Replication share leaks a GPP-encrypted password for svc_tgs, decrypted to reach the Users share and user.txt, then Kerberoasting the SPN-enabled Administrator account cracks to full domain compromise."

@@ -2,14 +2,13 @@
 title: hack.lu - MA
 date: 2026-10-24
 tags:
-  - ctf
-  - hacklu
-  - writeup
   - active-directory
   - kerberoasting
   - gmsa
   - golden-ticket
   - sid-history
+categories:
+  - hack.lu
 os: Windows
 category: Active Directory
 description: "hack.lu CTF - MA. A single-forest, parent-child Active Directory compromise: svc_test (user=pass) and a Kerberoasted svc_granite_sync get a foothold, cross a Kerberos-only within-forest trust, read a gMSA managed password to reach Backup$ and an NTDS.dit export, then forge a Golden Ticket with Enterprise Admins SID History to own the whole forest."

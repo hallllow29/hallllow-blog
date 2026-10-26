@@ -2,11 +2,11 @@
 title: HTB - Postman
 date: 2026-09-29
 tags:
-  - hackthebox
-  - writeup
   - redis
   - webmin
   - ssh
+categories:
+  - HackTheBox
 os: Linux
 difficulty: Easy
 description: "HTB Postman (Easy). Redis unauth foothold by writing an SSH key into authorized_keys, id_rsa.bak cracked with john to reach Matt, and Webmin CVE-2019-15107 for root."

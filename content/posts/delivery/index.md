@@ -2,11 +2,11 @@
 title: HTB - Delivery
 date: 2026-10-15
 tags:
-  - hackthebox
-  - writeup
   - osticket
   - mattermost
   - hashcat-rules
+categories:
+  - HackTheBox
 os: Linux
 difficulty: Easy
 description: "HTB Delivery (Easy). Abuse an osTicket support system to self-validate a Mattermost account, read plaintext SSH creds from a team channel, then crack a Mattermost DB password hash with a hint-driven hashcat ruleset for root."

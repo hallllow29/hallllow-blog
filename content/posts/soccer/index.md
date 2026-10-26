@@ -2,11 +2,11 @@
 title: HTB - Soccer
 date: 2026-10-13
 tags:
-  - hackthebox
-  - writeup
   - file-upload
   - websocket-sqli
   - gtfobins
+categories:
+  - HackTheBox
 os: Linux
 difficulty: Easy
 description: "HTB Soccer (Easy). Tiny File Manager default creds for a PHP web shell foothold, blind SQL injection over a WebSocket bridged to sqlmap for the player creds, and doas + dstat external plugin for root."

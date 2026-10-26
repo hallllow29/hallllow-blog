@@ -2,11 +2,11 @@
 title: HTB - Remote
 date: 2026-10-15
 tags:
-  - hackthebox
-  - writeup
   - nfs
   - umbraco
   - printspoofer
+categories:
+  - HackTheBox
 os: Windows
 difficulty: Easy
 description: "HTB Remote (Easy). An open NFS share leaks an Umbraco site backup; cracking the admin hash from Umbraco.sdf gives CMS access, a version-specific RCE lands a shell, and SeImpersonatePrivilege via PrintSpoofer escalates to SYSTEM."

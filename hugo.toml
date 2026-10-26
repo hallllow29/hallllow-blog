@@ -11,6 +11,8 @@ theme = "PaperMod"
   ShowReadingTime = true
   ShowShareButtons = false
   ShowCodeCopyButtons = true
+  ShowBreadCrumbs = true
+  ShowPostNavLinks = true
 
   [params.profileMode]
     enabled = true
@@ -52,3 +54,15 @@ theme = "PaperMod"
   name = "write-ups"
   url = "/posts/"
   weight = 3
+[[menu.main]]
+  name = "archive"
+  url = "/archive/"
+  weight = 4
+[[menu.main]]
+  name = "search"
+  url = "/search/"
+  weight = 5
+
+# JSON output on the home page builds the Fuse.js index that the search page uses
+[outputs]
+  home = ["HTML", "RSS", "JSON"]

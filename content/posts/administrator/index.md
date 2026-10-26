@@ -2,12 +2,12 @@
 title: HTB - Administrator
 date: 2026-10-13
 tags:
-  - hackthebox
-  - writeup
   - active-directory
   - bloodhound
   - acl-abuse
   - dcsync
+categories:
+  - HackTheBox
 os: Windows
 difficulty: Medium
 description: "HTB Administrator (Medium). An assumed-breach AD box: chain ACLs from Olivia through Michael, Benjamin, Emily and Ethan using bloodyAD, crack a Password Safe vault for mid-chain creds, targeted-Kerberoast Ethan, and finish with DCSync for full domain compromise."

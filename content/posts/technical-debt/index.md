@@ -2,14 +2,13 @@
 title: hack.lu - Technical Debt
 date: 2026-10-24
 tags:
-  - ctf
-  - hacklu
-  - writeup
   - active-directory
   - gpo-abuse
   - adcs
   - wsus
   - dns-hijack
+categories:
+  - hack.lu
 os: Windows
 category: Active Directory
 description: "hack.lu CTF - Technical Debt. From an unattend file in the WDS REMINST share to Domain Admin: svc_deploy creds, GPO abuse (pyGPOAbuse) for SYSTEM on the member server, then a chain of DNS hijack + ADCS WebServer cert + a rogue WSUS server (pyWSUS + socat TLS + Ligolo pivot) to push a SYSTEM 'update' to the DC, finishing with DCSync."

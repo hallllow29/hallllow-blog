@@ -2,12 +2,12 @@
 title: HTB - TombWatcher
 date: 2026-10-07
 tags:
-  - hackthebox
-  - writeup
   - active-directory
   - kerberoasting
   - gmsa
   - adcs
+categories:
+  - HackTheBox
 os: Windows
 difficulty: Medium
 description: "HTB TombWatcher (Medium). Assumed-breach AD box: an ACL chain through BloodHound (targeted Kerberoasting, ReadGMSAPassword, ForceChangePassword, WriteOwner) leads to a WinRM shell as john, then restoring a deleted cert_admin account from the AD Recycle Bin and abusing ESC15 (CVE-2024-49019) for Administrator."

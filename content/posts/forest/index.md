@@ -2,11 +2,11 @@
 title: HTB - Forest
 date: 2026-10-08
 tags:
-  - hackthebox
-  - writeup
   - asrep-roasting
   - acl-abuse
   - dcsync
+categories:
+  - HackTheBox
 os: Windows
 difficulty: Easy
 description: "HTB Forest (Easy). A read-only domain controller leaks its user list over an SMB null session. One account, svc-alfresco, has Kerberos pre-auth disabled, so we AS-REP roast it, crack the hash, and log in over WinRM. BloodHound then reveals an ACL path to Domain Admin: GenericAll on Exchange Windows Permissions grants WriteDACL over the domain, which we turn into DCSync rights and dump the Administrator hash."
