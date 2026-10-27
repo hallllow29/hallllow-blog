@@ -1,0 +1,71 @@
+{{- define "main" }}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+</header>
+
+{{- with .Content }}<div class="post-content" style="margin-bottom:1.5rem;">{{ . }}</div>{{ end }}
+
+{{- $items := where site.RegularPages "Section" "research" }}
+
+<input id="wuSearch" type="search" autocomplete="off" aria-label="search research"
+  placeholder="Search research by title, tag or category…" class="wu-search">
+
+<div id="wuNoResults" class="wu-empty" hidden>Nothing matches that search.</div>
+
+{{- /* group by category, with an "Other" catch-all so nothing silently drops */ -}}
+{{- $cats := slice }}
+{{- range $items }}{{ range .Params.categories }}{{ $cats = $cats | append . }}{{ end }}{{ end }}
+{{- $cats = $cats | uniq | sort }}
+{{- $groups := slice }}
+{{- range $cat := $cats }}
+  {{- $groups = $groups | append (dict "name" $cat "pages" (where $items "Params.categories" "intersect" (slice $cat))) }}
+{{- end }}
+{{- $other := complement (where $items "Params.categories" "intersect" $cats) $items }}
+{{- $groups = $groups | append (dict "name" "Other" "pages" $other) }}
+
+{{- range $g := $groups }}
+  {{- $group := sort $g.pages "Date" "desc" }}
+  {{- if $group }}
+  <section class="wu-group" data-group>
+    <h2 class="wu-group-title">{{ $g.name }}</h2>
+    <div class="wu-grid">
+      {{- range $p := $group }}
+        {{- $tagline := delimit (first 3 (default (slice) $p.Params.tags)) " · " }}
+        {{- $search := lower (printf "%s %s %s" $p.Title (delimit $p.Params.tags " ") (delimit $p.Params.categories " ")) }}
+        <a class="wu-card" href="{{ $p.RelPermalink }}" data-search="{{ $search }}">
+          <div class="wu-card-body">
+            <h3 class="wu-title">{{ $p.Title }}</h3>
+            {{- with $tagline }}<p class="wu-sub">{{ . }}</p>{{ end }}
+            <p class="wu-meta">{{ $p.Date.Format "Jan 2, 2006" }}</p>
+          </div>
+          <div class="wu-card-foot"><span>Read More →</span></div>
+        </a>
+      {{- end }}
+    </div>
+  </section>
+  {{- end }}
+{{- end }}
+
+<script>
+(function () {
+  var input = document.getElementById("wuSearch");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".wu-card"));
+  var groups = Array.prototype.slice.call(document.querySelectorAll("[data-group]"));
+  var none = document.getElementById("wuNoResults");
+  input.addEventListener("input", function () {
+    var q = input.value.trim().toLowerCase();
+    var any = false;
+    cards.forEach(function (c) {
+      var hit = !q || c.getAttribute("data-search").indexOf(q) !== -1;
+      c.style.display = hit ? "" : "none";
+      if (hit) any = true;
+    });
+    groups.forEach(function (g) {
+      var visible = g.querySelectorAll('.wu-card:not([style*="display: none"])').length;
+      g.style.display = visible ? "" : "none";
+    });
+    none.hidden = any;
+  });
+})();
+</script>
+{{- end }}
