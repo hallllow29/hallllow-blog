@@ -15,6 +15,10 @@ difficulty: Medium
 description: "HTB Authority (Medium). An AD box via a PWM self-service password portal: anonymous/guest SMB access leaks Ansible automation, cracking an ansible-vault blob (ansible2john + john) unlocks the PWM admin svc_pwm, a rogue LDAP profile + Responder captures svc_ldap in cleartext for a WinRM shell, and an ADCS ESC1 template (plus an LDAP shell adding the user to Domain Admins) finishes the box as Administrator."
 ---
 
+<p style="text-align:center">
+  <img src="featured.png" alt="Authority box" width="250">
+</p>
+
 <p>
   <img src="https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=flat&logo=hackthebox&logoColor=black" alt="Platform">
   <img src="https://img.shields.io/badge/OS-Windows-0078D6?style=flat&logo=windows&logoColor=white" alt="OS">

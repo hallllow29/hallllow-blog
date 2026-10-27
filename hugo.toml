@@ -1,4 +1,4 @@
-baseURL = "https://hallllow-blog.pages.dev/"
+baseURL = "https://ctf-hallllow.blog/"
 languageCode = "en-us"
 title = "hallllow"
 theme = "PaperMod"
