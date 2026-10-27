@@ -117,3 +117,73 @@ body {
   .term-body { font-size: .92rem; padding: 1.2rem 1.1rem 1.4rem; }
   .t-ls a, .t-social a { display: inline-block; }
 }
+
+/* ===== Write-ups listing (grouped cards + filter) ===== */
+.wu-search {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: .4rem 0 2rem;
+  padding: .85rem 1.1rem;
+  font-family: var(--mono);
+  font-size: .98rem;
+  color: var(--primary);
+  background: #0b0d0f;
+  border: 1.5px solid var(--accent);
+  border-radius: 12px;
+}
+.wu-search::placeholder { color: #70767d; }
+.wu-search:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+
+.wu-group { margin: 0 0 2.6rem; }
+.wu-group-title {
+  margin: 0 0 1.1rem;
+  padding-left: .7rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border-left: 4px solid var(--accent);
+  line-height: 1.1;
+}
+
+.wu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.1rem;
+}
+
+.wu-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  background: #0f1113;
+  border: 1px solid #2a2d31;
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.wu-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .5);
+}
+.wu-card-body { flex: 1 1 auto; padding: 1.1rem 1.15rem .9rem; }
+.wu-title { margin: 0 0 .5rem; font-size: 1.2rem; font-weight: 800; color: var(--primary); line-height: 1.2; }
+.wu-sub { margin: 0 0 .25rem; font-family: var(--mono); font-size: .82rem; color: #aeb4ba; }
+.wu-meta { margin: 0; font-size: .82rem; color: #8a9097; }
+.wu-card-foot {
+  padding: .7rem 1.15rem;
+  background: #0a0c0e;
+  border-top: 1px solid #202327;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: .9rem;
+}
+
+.wu-empty { color: #8a9097; font-family: var(--mono); margin: 1rem 0; }
+
+@media (max-width: 640px) {
+  .wu-grid { grid-template-columns: 1fr; }
+}
