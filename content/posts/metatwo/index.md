@@ -15,6 +15,10 @@ difficulty: Easy
 description: "HTB MetaTwo (Easy). A WordPress box: a BookingPress SQL injection (CVE-2022-0739) dumps the manager hash, cracked to log into wp-admin. A WordPress media XXE (CVE-2021-29447) reads wp-config.php for the DB and FTP creds. The FTP share has a send_email.php with jnelson's SSH password, and root comes from cracking a passpie GPG keyring to export the stored root password."
 ---
 
+<p style="text-align:center">
+  <img src="featured.png" alt="MetaTwo box" width="250">
+</p>
+
 <p>
   <img src="https://img.shields.io/badge/Platform-HackTheBox-9FEF00?style=flat&logo=hackthebox&logoColor=black" alt="Platform">
   <img src="https://img.shields.io/badge/OS-Linux-E95420?style=flat&logo=linux&logoColor=white" alt="OS">
