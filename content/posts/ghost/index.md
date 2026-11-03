@@ -41,26 +41,26 @@ nmap -sV -sC -p- 10.129.231.105 -oN nmap/ghost
 
 ![](Images/Ghost-nmap2.png)
 
-With the scan in hand I can see the target is a DC, I'm almost 100% sure because of LDAP being there. I also see some domains like `DC01.ghost.htb` and `ghost.htb`, so I grabbed those and put them on my `/etc/hosts`. Then I moved to the web server, but no luck, it just threw a not found error.
+With the scan in hand I can tell the target is a DC, I'm almost 100% sure because of all the LDAP and Kerberos ports. The scan also leaks a couple of domains like `DC01.ghost.htb` and `ghost.htb`, so I grabbed those and threw them on my `/etc/hosts`. Then I went to the web server, but no luck, it just threw a not found error.
 
 ![](Images/Ghost-web404nf.png)
 
-After searching a lot on the sites I kept finding, I couldn't pull anything out of them. Well, that's why this is an Insane box right, there are a lot of assets and it will probably lead me into a rabbit hole. I did find some subdomains like `core.ghost.htb`.
+This is an Insane box though, so there's probably a ton of stuff hiding behind vhosts and I'm about to walk into a rabbit hole or two. I started enumerating subdomains and found `core.ghost.htb`.
 
 ![](Images/Ghost-coreghost.png)
 
-Here I was trying to get stuff through Burp and other things but nothing useful, then I landed on `core.ghost.htb`.
+So I added it to my `/etc/hosts` and opened it up.
 
 ![](Images/Ghost-corehtb.png)
 
-And this just redirected me to `federation.ghost.htb`.
+And it just redirected me to `federation.ghost.htb`.
 
 ![](Images/Ghost-federationghost.png)
 
-This one caught my attention, because it's an Active Directory Federation Service, an SSO for Microsoft, so maybe there are more subdomains than the ones I had, so I ran a ffuf scan to check.
+This one caught my eye. It's Active Directory Federation Services, Microsoft's SSO, and where there's ADFS there are usually more hosts around it, so I ran a ffuf scan to look for more subdomains.
 
 ```bash
-ffuf -u http://ghost.htb -H "Host: FUZZ.ghost.htb" -w subdomains.txt -fs 0
+ffuf -w /usr/share/seclist/Discovery/DNS/subdomains-top1million-5000.txt -u http://ghost.htb:8008 -H "Host: FUZZ.ghost.htb" -ac
 ```
 
 ![](Images/Ghost-ffuf.png)
@@ -79,7 +79,7 @@ There's the Gitea landing page. Gitea is basically like GitHub but you can host 
 
 ## LDAP injection → intranet
 
-In that request I could see it building something called `l_ldap-username`, so maybe it's querying the LDAP server. I already knew about LDAP injection so I went to research how to reproduce it here. I tried a few things, and apparently if you put `*` in the username and `*` in the password you just get logged in.
+In that request I could see it building something called `l_ldap-username`, so maybe it's querying the LDAP server. I already knew about LDAP injection, so I went to research how to reproduce it here. I tried a few things, and it turns out that putting `*` in both the username and the password just logs you straight in. The `*` works as a wildcard inside the LDAP filter, so instead of matching one specific account it matches the first one it finds, and the login goes through.
 
 ![](Images/Ghost-loggedin.png)
 
@@ -87,7 +87,7 @@ We're in as `kathryn.holland`. Let's see what we can get from here. Turns out I 
 
 ![](Images/Ghost-users.png)
 
-From what I read they're migrating Gitea to Bitbucket, and the only way to log in on Gitea was with the `gitea_temp_principal` account using its intranet token as a password. The password isn't here, you either ask IT for it or look for an attribute on LDAP. So if I have LDAP injection, maybe I can pull the password for that account and get into Gitea.
+From what I could read, they're migrating from Gitea to Bitbucket, and the only account that can still log into Gitea is `gitea_temp_principal`, which uses an intranet token as its password. That token isn't shown anywhere on the page, you're supposed to ask IT for it or pull it from an LDAP attribute. So if I've got LDAP injection, maybe I can just read that password myself and get into Gitea.
 
 So my idea was: maybe `gitea_temp_principal` has a password or token stored in some LDAP attribute. First I confirmed the user really exists on LDAP.
 
@@ -153,6 +153,10 @@ So the creds are `gitea_temp_principal:szrr8kpc3z6onlqf`, let's give it a go on 
 ![](Images/Ghost-gitealogin.png)
 
 And we're in, they're valid. Before moving forward, I took all the users I found earlier and validated which ones exist on the domain with `kerbrute`.
+
+```bash
+kerbrute userenum -d ghost.htb --dc ghost.htb users.txt
+```
 
 ![](Images/Ghost-kerbrute.png)
 
@@ -250,7 +254,7 @@ The ticket is base64 encoded, so let's bring it over to our side.
 
 ![](Images/Ghost-ticketonourside.png)
 
-Now the ticket is on our side. Quick recap of what I did: I found a cached SSH session for that user, SSH'd to the workstation, stole the Kerberos ticket, encoded it to base64 to make it easier, brought it to my machine and exported it to my klist. Let's confirm it's valid.
+Now the ticket is on our side. Quick recap of what I did: I found a cached SSH session for that user, SSH'd to the workstation, stole the Kerberos ticket, encoded it to base64 to make it easier to move, brought it to my machine, saved it as a `.ccache` and loaded it so I could use it. Let's confirm it's valid.
 
 ![](Images/Ghost-nxcvalidramirez.png)
 
@@ -276,13 +280,13 @@ Got the password, `justin.bradley:Qwertyuiop1234$$`, let's validate it.
 
 ![](Images/Ghost-valid.png)
 
-Valid, nice. I think this user can read the gMSA password in cleartext, because I saw that earlier. But first I logged in with evil-winrm and grabbed the user flag:
+Valid, nice. Remember earlier when I tried to read the gMSA password and it said only `justin.bradley` had the rights? Well, now I'm him. But first the user flag, so I logged in with evil-winrm and grabbed it:
 
 ```
 6b3ccc488dc89539c4d2cf873c1fb268
 ```
 
-Now moving on, and yeah, he can read the gMSA password.
+And then, yeah, now I can read the gMSA password.
 
 ![](Images/Ghost-gmspassword.png)
 
@@ -390,7 +394,7 @@ And with the executable ready I popped a reverse shell, this time a privileged o
 
 ![](Images/Ghost-payuload.png)
 
-Seen from netcat.
+And here's the shell landing on my netcat listener.
 
 ![](Images/Ghost-gotprivescal.png)
 
