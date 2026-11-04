@@ -29,7 +29,7 @@ description: "HTB Voleur (Medium). An assumed-breach, Kerberos-only AD box: a pa
 
 ## Recon
 
-As usual I started my recon with nmap. Keep in mind this box gives you some initial credentials, `ryan.naylor:HollowOct31Nyt`.
+As usual I kicked off with nmap. One thing to keep in mind, this is an assumed-breach box, so it hands you some initial creds up front, `ryan.naylor:HollowOct31Nyt`, and we build the whole thing from there.
 
 ```bash
 nmap -sV -sC -p- 10.129.84.4 -oN nmap/voleur -Pn
@@ -37,7 +37,7 @@ nmap -sV -sC -p- 10.129.84.4 -oN nmap/voleur -Pn
 
 ![](Images/Voleur-nmapscan.png)
 
-This looks like a domain controller, we've got LDAP and Kerberos open. So the first thing I did was validate the initial credentials to see what that user can access. Since NTLM is off here, I go Kerberos all the way with `-k`.
+This looks like a domain controller, we've got LDAP and Kerberos open. So the first thing I did was validate the creds to see what ryan can actually touch. Small heads-up: NTLM is off on this box, so it's Kerberos only, which means `-k` goes on basically every command. Forget it once and you'll be staring at auth errors wondering what you broke. Ask me how I know.
 
 ```bash
 nxc smb dc.voleur.htb -u 'ryan.naylor' -p 'HollowOct31Nyt' -k
@@ -87,7 +87,7 @@ nxc ldap dc.voleur.htb -u svc_iis -p N5pXyW1VqM7CZ8 -k
 
 ![](Images/Voleur-nxcbothvalid.png)
 
-Both valid. Before moving on I ran BloodHound, I've got 3 users and their creds now but I need to understand who they are and what they can do in the AD.
+Both valid, two more accounts in the pocket. Before charging in I ran BloodHound, because I've got 3 users now and I'd rather know who they actually are and what they can touch than start poking at things blindly.
 
 ```bash
 bloodhound-python -u ryan.naylor -p HollowOct31Nyt -ns 10.129.84.4 -d voleur.htb -c all
@@ -115,7 +115,7 @@ nxc ldap dc.voleur.htb -u svc_ldap -p M1XyC9pW7qT5Vn --kerberoasting hash.txt -k
 
 ![](Images/Voleur-kerberoasting.png)
 
-Nice, let's save the hash and try to crack it. And well, that was a rabbit hole, I couldn't crack it. So I went back to BloodHound, and I still have `WriteSPN` over `svc_winrm`, so let's do the exact same thing to that account.
+Nice, let's save the hash and send it to John. And... yeah, that one just refused to die. Rockyou, rules, the works, nothing came out. Classic rabbit hole, and I burned a solid while on it before admitting defeat. No stress though, I still have `WriteSPN` over `svc_winrm`, so let's pull the exact same trick on that account instead and hope it's less stubborn.
 
 ```bash
 bloodyAD --host dc.voleur.htb -d voleur.htb -u svc_ldap -p 'M1XyC9pW7qT5Vn' -k set object svc_winrm servicePrincipalName -v 'HTTP/fake2.voleur.htb'
@@ -131,7 +131,7 @@ Cracked it with John, this time for `svc_winrm`.
 
 ![](Images/Voleur-hashcatsvcwinrm.png)
 
-Got it, `svc_winrm:AFireInsidedeOzarctica980219afi`. Let's validate it.
+And this one cracked no problem, `svc_winrm:AFireInsidedeOzarctica980219afi`. Much better. Let's validate it.
 
 ![](Images/Voleur-nxcwinrm.png)
 
@@ -152,7 +152,7 @@ evil-winrm -i dc.voleur.htb -r voleur.htb
 
 ![](Images/Voleur-evilwinrlog.png)
 
-And grabbed the user flag:
+And boom, we've got a shell on the box. First flag in the bag:
 
 ```
 9de8d27b9156b07a333c896e7e4c4da9
@@ -160,7 +160,7 @@ And grabbed the user flag:
 
 ## Restoring a deleted user (AD Recycle Bin)
 
-Next step. On the Excel I saw that one user was deleted and his password was sitting there in cleartext, and `svc_ldap` belongs to the `restore_users` group, so maybe if I restore that user it gives me something useful. First I checked which user was deleted, I was betting on `todd.wolfe` since we already saw him in the Excel.
+Next step, and this is where it gets fun. Back on that Excel there was a user flagged as deleted, with his password sitting right there in cleartext. And remember `svc_ldap` sits in the `restore_users` group? Yeah, time for a bit of Active Directory necromancy, we're bringing a dead account back to life. First I checked which user was actually deleted, I had my money on `todd.wolfe` since we'd already seen him in the Excel.
 
 ```bash
 bloodyAD --host dc.voleur.htb -d voleur.htb -u svc_ldap -p 'M1XyC9pW7qT5Vn' -k get children --target 'CN=Deleted Objects,DC=voleur,DC=htb'
@@ -178,15 +178,15 @@ bloodyAD --host dc.voleur.htb -d voleur.htb -u svc_ldap -p 'M1XyC9pW7qT5Vn' -k s
 
 ![](Images/Voleur-restored.png)
 
-So we got our guy back, `todd.wolfe:NightT1meP1dg3on14`. Let's validate him.
+And just like that, todd is back from the grave, `todd.wolfe:NightT1meP1dg3on14`. Let's make sure the resurrection actually took.
 
 ![](Images/Voleur-userisbacj.png)
 
-And yeah, he's back. Enumerating the shares again with todd, I found he has access to another folder inside the `IT` share, this time called `Second-Line Support`. Inside looks like an archive for users who already left the company, basically everything that was on that user's machine, this time for `todd.wolfe`.
+Alive and kicking. Enumerating the shares again as todd, I found he has access to another folder inside the `IT` share, this time called `Second-Line Support`. Inside looks like an archive for users who already left the company, basically everything that was on that user's machine, this time for `todd.wolfe`.
 
 ## DPAPI → jeremy.combs
 
-Inside todd's archived profile is his old Windows data, and that's where DPAPI comes in. Windows stores protected secrets (like saved credentials) under the user's AppData, encrypted with a DPAPI master key. That master key is itself encrypted with the user's password (and SID), so if I have todd's password I can decrypt the master key, and then use it to decrypt the credential blob. Let's see if the theory holds.
+Inside todd's archived profile is a copy of his old Windows data, and this is where DPAPI enters the chat. Quick rundown if you've never played with it: Windows keeps protected secrets (saved credentials and that kind of thing) under the user's AppData, encrypted with a DPAPI master key, and that master key is itself encrypted with the user's password plus their SID. So if I've got todd's password, I can peel the master key open, and then use it to crack the credential blob sitting next to it. That's the theory anyway, let's see if it holds.
 
 I found the master key, so I used dpapi.py to decrypt it with todd's password and SID.
 
@@ -218,7 +218,7 @@ The note just points us to SSH, and it mentions `svc_backup`, so let's log in as
 
 ![](Images/Voleur-loggedinssh.png)
 
-Got it. Now, a backup service account? That smells like NTDS.dit or something along those lines, so let's check. I did a quick search for the files on the system and transferred them to my machine.
+And we're in. Now hold on, a backup service account, on a domain controller? Oh, you already know where this is heading. That screams NTDS.dit, so let's go dig it out. I did a quick search for the files on the system and pulled them over to my machine.
 
 ![](Images/Voleur-transfer.png)
 
@@ -230,13 +230,13 @@ secretsdump.py -ntds ntds.dit -system SYSTEM LOCAL
 
 ![](Images/Voleur-dumphashes.png)
 
-Got it. Now I can just request a ticket for the Administrator with his AES key (pass-the-key).
+And there it is, every hash on the domain, Administrator included. I don't even need to crack anything, I'll just grab a TGT straight from his AES key (pass-the-key) and walk in through the front door.
 
 ```bash
 getTGT.py voleur.htb/Administrator -aesKey f577668d58955ab962be9a489c032f06d84f3b66cc05de37716cac917acbeebb
 ```
 
-And then get a session and the root flag.
+Export the ticket, open a session as Administrator, and the box is done.
 
 ![](Images/Voleur-rootflag.png)
 
@@ -256,3 +256,7 @@ Root flag:
 | Lateral | `restore_users` → restore `todd.wolfe` from Recycle Bin | todd's archived profile |
 | Lateral | DPAPI master key + credential decrypt | `jeremy.combs` → SSH key → `svc_backup` |
 | Root | grab `ntds.dit` + `SYSTEM`, secretsdump, pass-the-key | `Administrator` (root.txt) |
+
+## Final thoughts
+
+Long one, but a really clean chain once the pieces click. What I liked most is how everything loops back on itself, that `restore_users` group gave me the ACLs to kerberoast AND the power to raise todd from the dead, and todd's DPAPI loot then handed me the next user. No single crazy exploit, just one solid pivot feeding into the next. The Kerberos-only setup kept me honest too, no lazy NTLM shortcuts, you actually have to babysit your tickets the whole way through. Really enjoyed this one.
